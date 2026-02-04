@@ -1,0 +1,153 @@
+🚀 INSTANT FUNDING - Guide Technique Complet
+Documentation pour Développeur - Implémentation Complète
+1. Vue d'Ensemble
+L'Instant Funding est le type d'évaluation le plus risqué pour la PropFirm car il donne un accès immédiat au capital sans phase d'évaluation préalable. Le trader obtient directement un compte financé et peut commencer à trader instantanément.
+1.1 Caractéristiques Principales
+•	Accès immédiat: Pas de phase d'évaluation
+•	Risque maximal: Aucun filtre de compétence
+•	Personnalisation limitée: Paramètres restreints pour protéger la firme
+•	Prix élevé: Compense le risque accru
+•	Scaling limité: Maximum 2× après 3 mois profitables
+2. Paramètres Personnalisables
+2.1 Tableau des Limites
+Paramètre	Minimum	Maximum	Valeur Par Défaut
+Account Size	$5,000	$200,000	$25,000
+Daily Loss	2%	6%	3%
+Max Loss	4%	10%	6%
+Profit Split	50%	80%	50%
+Drawdown Type	Static	Trailing	Static
+ 
+3. Logique de Pricing Détaillée
+3.1 Prix de Base par Taille de Compte
+Taille du Compte	Prix de Base	Justification
+$5,000	$99	Entrée de gamme
+$10,000	$149	Standard populaire
+$25,000	$299	Professionnel
+$50,000	$499	Capital important
+$100,000	$799	Gros capital
+$200,000	$1,299	Premium
+3.2 Formule de Calcul du Prix Final
+Prix Final = Prix de Base + Ajustement Risque + Ajustement Split
+3.2.1 Ajustement Risque (Daily Loss & Max Loss)
+Principe Fondamental:
+Plus le trader peut perdre = Plus de risque pour la firme = Prix plus élevé
+Coefficients Daily Loss:
+•	Si Daily Loss > 4% : +80€ par 1% supplémentaire
+•	Si Daily Loss < 3% : -50€ par 1% en moins
+•	Entre 3% et 4% : Pas d'ajustement (zone neutre)
+Coefficients Max Loss:
+•	Si Max Loss > 8% : +60€ par 1% supplémentaire
+•	Si Max Loss < 6% : -40€ par 1% en moins
+•	Entre 6% et 8% : Pas d'ajustement (zone neutre)
+Coefficients Drawdown Type:
+•	Static : 0€ (référence)
+•	Trailing : +50€ (plus risqué car suit les profits)
+•	End of Day : -30€ (moins risqué car reset quotidien)
+3.2.2 Ajustement Profit Split
+Formule : (Split - 50%) × 5€
+•	50% split = 0€ d'ajustement
+•	60% split = +50€
+•	70% split = +100€
+•	80% split = +150€
+3.2.3 Prix Minimum Garanti
+Le prix final ne peut jamais être inférieur à 50% du prix de base, même avec tous les ajustements négatifs.
+ 
+4. Code d'Implémentation
+Voici le code JavaScript complet pour calculer le prix de l'Instant Funding :
+function calculateInstantFundingPrice(params) {   // Récupération des paramètres   const accountSize = params.accountSize;  // en dollars   const dailyLoss = params.dailyLoss;      // en pourcentage (ex: 3 pour 3%)   const maxLoss = params.maxLoss;          // en pourcentage   const profitSplit = params.profitSplit;  // en pourcentage   const drawdownType = params.drawdownType; // 'static', 'trailing', 'eod'      // Prix de base selon la taille du compte   const basePrices = {     5000: 99,     10000: 149,     25000: 299,     50000: 499,     100000: 799,     200000: 1299   };      let basePrice = basePrices[accountSize];   let riskAdjustment = 0;   let splitAdjustment = 0;      // Ajustement Daily Loss   if (dailyLoss > 4) {     riskAdjustment += (dailyLoss - 4) * 80;   } else if (dailyLoss < 3) {     riskAdjustment -= (3 - dailyLoss) * 50;   }      // Ajustement Max Loss   if (maxLoss > 8) {     riskAdjustment += (maxLoss - 8) * 60;   } else if (maxLoss < 6) {     riskAdjustment -= (6 - maxLoss) * 40;   }      // Ajustement Drawdown Type   if (drawdownType === 'trailing') {     riskAdjustment += 50;   } else if (drawdownType === 'eod') {     riskAdjustment -= 30;   }      // Ajustement Profit Split   splitAdjustment = (profitSplit - 50) * 5;      // Calcul du prix final avec minimum garanti   let finalPrice = basePrice + riskAdjustment + splitAdjustment;   finalPrice = Math.max(finalPrice, basePrice * 0.5);      return {     basePrice: basePrice,     riskAdjustment: riskAdjustment,     splitAdjustment: splitAdjustment,     finalPrice: Math.round(finalPrice),     breakdown: {       dailyLossImpact: calculateDailyLossImpact(dailyLoss),       maxLossImpact: calculateMaxLossImpact(maxLoss),       drawdownTypeImpact: drawdownType === 'trailing' ? 50 :                            drawdownType === 'eod' ? -30 : 0,       splitImpact: splitAdjustment     }   }; }  // Fonctions auxiliaires function calculateDailyLossImpact(dailyLoss) {   if (dailyLoss > 4) return (dailyLoss - 4) * 80;   if (dailyLoss < 3) return -(3 - dailyLoss) * 50;   return 0; }  function calculateMaxLossImpact(maxLoss) {   if (maxLoss > 8) return (maxLoss - 8) * 60;   if (maxLoss < 6) return -(6 - maxLoss) * 40;   return 0; }
+ 
+5. Calcul du Risk Score
+Le Risk Score est un indicateur crucial pour évaluer le niveau de risque d'une configuration.
+5.1 Formule du Risk Score
+Risk Score = (Profit Split %) / (Daily Loss % × Max Loss %)
+5.2 Interprétation du Risk Score
+Risk Score	Niveau de Risque	Actions Recommandées
+< 0.5	ÉLEVÉ	Surveillance accrue, vérification KYC renforcée, monitoring quotidien
+0.5 - 1.5	MOYEN	Monitoring standard, vérifications hebdomadaires
+> 1.5	FAIBLE	Privilèges bonus, scaling plus rapide, payouts prioritaires
+ 
+6. Règles de Protection Obligatoires
+6.1 Règles Non-Négociables (TOUJOURS)
+1.	Best Day Rule (50%): Le meilleur jour ne peut pas représenter plus de 50% du profit total
+2.	No News Trading: Interdiction totale de trader pendant les annonces économiques majeures
+3.	Stop Loss Obligatoire: Chaque position doit avoir un stop loss défini
+4.	IP Lock (30 jours): Pas de changement d'IP pendant les 30 premiers jours
+5.	Minimum 3% pour Payout: Le profit minimum pour demander un retrait est de 3%
+6.	KYC Complet: Vérification d'identité complète avant tout payout
+7.	Consistency Rule (30-50%): Aucun jour de trading ne peut dépasser 30-50% du profit total
+6.2 Interdictions Absolues (JAMAIS)
+•	Martingale / Grid Trading
+•	Weekend Holding (sauf crypto)
+•	Scaling > 2× du capital initial
+•	EA haute fréquence
+•	Copy Trading
+•	Hedging entre comptes
+•	Latency Arbitrage
+6.3 Scaling Rules
+Le scaling (augmentation du capital) est très limité pour l'Instant Funding :
+•	Après 3 mois profitables consécutifs : scaling ×1.5
+•	Après 6 mois profitables : scaling ×2 maximum
+•	Jamais plus de ×2 du capital initial
+ 
+7. Exemples de Calcul Concrets
+7.1 Configuration Conservative
+Paramètre	Valeur
+Account Size	$10,000
+Daily Loss	2%
+Max Loss	4%
+Profit Split	50%
+Drawdown Type	End of Day
+CALCUL	
+Prix de Base	$149
+Daily Loss Adj	-$50 (2% < 3%)
+Max Loss Adj	-$80 (4% < 6%)
+DD Type Adj	-$30 (EOD)
+Split Adj	$0 (50%)
+PRIX FINAL	$75 (minimum)
+Risk Score	6.25 (Très Faible Risque)
+ 
+7.2 Configuration Agressive
+Paramètre	Valeur
+Account Size	$50,000
+Daily Loss	6%
+Max Loss	10%
+Profit Split	80%
+Drawdown Type	Trailing
+CALCUL	
+Prix de Base	$499
+Daily Loss Adj	+$160 (6% > 4%)
+Max Loss Adj	+$120 (10% > 8%)
+DD Type Adj	+$50 (Trailing)
+Split Adj	+$150 (80%)
+PRIX FINAL	$979
+Risk Score	1.33 (Risque Moyen-Élevé)
+ 
+8. Recommandations pour le Développeur
+8.1 Architecture Technique
+8.	API de Calcul: Créer une API REST pour calculer les prix en temps réel
+9.	Cache: Implémenter un cache Redis pour les calculs fréquents
+10.	Validation: Valider tous les paramètres côté serveur
+11.	Logging: Logger toutes les configurations pour analyse
+12.	Monitoring: Dashboard en temps réel des Risk Scores
+8.2 Interface Utilisateur
+•	Sliders interactifs pour chaque paramètre
+•	Affichage en temps réel du prix et du Risk Score
+•	Indicateurs visuels (vert/orange/rouge) pour le risque
+•	Tooltips explicatifs sur chaque paramètre
+•	Configurations pré-définies (Conservative, Balanced, Aggressive)
+8.3 Sécurité et Validation
+Validations Obligatoires:
+•	Daily Loss ne peut pas être >= Max Loss
+•	Vérifier les limites min/max de chaque paramètre
+•	Bloquer les combinaisons dangereuses (Risk Score < 0.2)
+•	Rate limiting sur les calculs de prix
+•	Audit trail de toutes les modifications
+8.4 Tests Unitaires Recommandés
+Créer des tests pour :
+•	Toutes les combinaisons de paramètres limites
+•	Les calculs de Risk Score
+•	Le prix minimum garanti
+•	Les ajustements négatifs et positifs
+•	Les cas d'erreur et validation
+--- FIN DU DOCUMENT ---
+Doji Funding © 2025-2026 - Documentation Confidentielle
