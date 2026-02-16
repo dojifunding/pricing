@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doji Funding - Challenge Configurator</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card: #111113;
+            --bg-card-hover: #161618;
+            --bg-input: #1a1a1e;
+            --bg-input-hover: #222228;
+            --border-subtle: #2a2a30;
+            --border-medium: #3a3a42;
+            --border-bright: #4a4a55;
+            --text-primary: #e8e8ec;
+            --text-secondary: #8e8e96;
+            --text-muted: #5a5a64;
+            --green-accent: #00e050;
+            --green-glow: rgba(0, 224, 80, 0.15);
+            --green-dark: #00a83a;
+            --green-dim: rgba(0, 224, 80, 0.08);
+            --metal-light: #c8c8d0;
+            --metal-mid: #9898a0;
+            --metal-dark: #686870;
+            --red-accent: #ff3b3b;
+            --orange-accent: #ff9f1a;
+            --blue-accent: #4a9eff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--text-primary);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(200,200,210,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(0,224,80,0.02) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* â”€â”€ HEADER â”€â”€ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #3a3a42, #1a1a1e);
+            border: 1px solid var(--border-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--green-accent);
+            text-shadow: 0 0 12px var(--green-glow);
+        }
+        
+        h1 {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-primary);
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span { color: var(--green-accent); }
+
+        .header-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7em;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* â”€â”€ CONFIGURATOR LAYOUT â”€â”€ */
+        .configurator-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .configurator-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* â”€â”€ CARD â”€â”€ */
+        .evaluation-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .evaluation-card:hover {
+            border-color: var(--border-medium);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .card-title {
+            font-size: 1.25em;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: all 0.3s ease;
+        }
+        
+        .badge.one-step {
+            background: rgba(74,158,255,0.12);
+            color: var(--blue-accent);
+            border: 1px solid rgba(74,158,255,0.25);
+        }
+        
+        .badge.two-step {
+            background: rgba(200,200,210,0.08);
+            color: var(--metal-light);
+            border: 1px solid rgba(200,200,210,0.15);
+        }
+
+        .badge.coming-soon {
+            background: rgba(255,159,26,0.12);
+            color: var(--orange-accent);
+            border: 1px solid rgba(255,159,26,0.25);
+        }
+
+        /* â”€â”€ CHALLENGE TYPE SELECTOR â”€â”€ */
+        .challenge-type-selector {
+            display: flex;
+            gap: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+        }
+
+        .challenge-type-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .challenge-type-btn:not(:last-child) {
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        .challenge-type-btn.active {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+        }
+
+        .challenge-type-btn.disabled-btn {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .challenge-type-btn:hover:not(.active):not(.disabled-btn) {
+            background: var(--bg-input-hover);
+            color: var(--text-secondary);
+        }
+
+        .challenge-type-btn .btn-sub {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            font-weight: 400;
+            margin-top: 2px;
+            opacity: 0.7;
+        }
+
+        .challenge-type-btn.active .btn-sub {
+            opacity: 0.8;
+        }
+
+        /* â”€â”€ COMING SOON OVERLAY â”€â”€ */
+        .coming-soon-overlay {
+            background: var(--bg-input);
+            border: 1px dashed var(--border-medium);
+            border-radius: 10px;
+            padding: 40px 24px;
+            text-align: center;
+        }
+        
+        .coming-soon-overlay h3 {
+            color: var(--orange-accent);
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .coming-soon-overlay p {
+            color: var(--text-secondary);
+            font-size: 0.88em;
+            line-height: 1.7;
+        }
+
+        /* â”€â”€ PARAMETERS â”€â”€ */
+        .parameters { margin-bottom: 20px; }
+        
+        .parameter-group { margin-bottom: 14px; }
+        
+        .parameter-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.82em;
+        }
+        
+        .parameter-label span:first-child {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .parameter-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--green-accent) !important;
+            font-size: 0.95em;
+        }
+        
+        /* â”€â”€ SLIDERS â”€â”€ */
+        .slider {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border-subtle);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 4px 0;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--green-accent);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--green-glow), 0 2px 4px rgba(0,0,0,0.4);
+            transition: transform 0.15s ease;
+        }
+        
+        .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--green-accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px var(--green-glow);
+        }
+
+        .slider::-webkit-slider-runnable-track {
+            background: var(--border-subtle);
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        /* â”€â”€ SELECTS â”€â”€ */
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        select:hover { border-color: var(--border-medium); }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--green-accent);
+            box-shadow: 0 0 0 2px var(--green-glow);
+        }
+
+        select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        /* â”€â”€ PRICING DISPLAY â”€â”€ */
+        .pricing-display {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .price-row span:last-child {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .price-row.total {
+            font-size: 1.15em;
+            font-weight: 700;
+            padding-top: 14px;
+            margin-top: 6px;
+            border-top: 1px solid var(--border-medium);
+            color: var(--text-primary);
+        }
+
+        .price-row.total span:last-child {
+            color: var(--green-accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            text-shadow: 0 0 16px var(--green-glow);
+        }
+        
+        /* â”€â”€ RISK INDICATOR â”€â”€ */
+        .risk-indicator {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85em;
+            border: 1px solid;
+        }
+        
+        .risk-indicator.low {
+            background: rgba(0,224,80,0.06);
+            color: var(--green-accent);
+            border-color: rgba(0,224,80,0.2);
+        }
+        
+        .risk-indicator.medium {
+            background: rgba(255,159,26,0.06);
+            color: var(--orange-accent);
+            border-color: rgba(255,159,26,0.2);
+        }
+        
+        .risk-indicator.high {
+            background: rgba(255,59,59,0.06);
+            color: var(--red-accent);
+            border-color: rgba(255,59,59,0.2);
+        }
+        
+        .note-box {
+            background: var(--green-dim);
+            border: 1px solid rgba(0,224,80,0.15);
+            color: var(--text-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 14px;
+            font-size: 0.78em;
+            line-height: 1.6;
+        }
+
+        .note-box strong { color: var(--green-accent); }
+        
+        /* â”€â”€ LOSS TYPE TOGGLES â”€â”€ */
+        .loss-type-group { margin-top: 6px; }
+        
+        .loss-type-toggle {
+            display: flex;
+            gap: 0;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .loss-type-toggle button {
+            flex: 1;
+            padding: 5px 6px;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        
+        .loss-type-toggle button.active {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+        }
+        
+        .loss-type-toggle button:hover:not(.active) {
+            background: var(--bg-input-hover);
+            color: var(--text-secondary);
+        }
+        
+        .loss-type-label {
+            font-size: 0.7em;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* â”€â”€ HOLDING OPTIONS â”€â”€ */
+        .holding-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.2s;
+        }
+
+        .checkbox-group:hover { border-color: var(--border-medium); }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--green-accent);
+        }
+        
+        .checkbox-group label {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* â”€â”€ HIDDEN â”€â”€ */
+        /* -- RESET BUTTON -- */
+        .reset-btn {
+            width: 100%;
+            padding: 12px 20px;
+            margin-top: 16px;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--red-accent);
+            color: var(--red-accent);
+            background: rgba(255,59,59,0.06);
+        }
+
+        .reset-btn .reset-icon {
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+
+        .reset-btn:hover .reset-icon {
+            transform: rotate(-180deg);
+        }
+
+        /* -- TOOLTIP -- */
+        .tooltip-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .tooltip-trigger {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--border-subtle);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            margin-left: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .tooltip-trigger:hover {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border-medium);
+            border-radius: 10px;
+            padding: 16px;
+            width: 300px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+        }
+
+        .tooltip-trigger:hover + .tooltip-content,
+        .tooltip-content:hover {
+            display: block;
+        }
+
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--border-medium);
+        }
+
+        .tooltip-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: var(--green-accent);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tooltip-text {
+            font-size: 0.78em;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-text:last-child { margin-bottom: 0; }
+
+        .tooltip-text strong { color: var(--text-primary); }
+
+        /* -- EQUAL LOSS WARNING -- */
+        .equal-loss-warning {
+            background: rgba(255,159,26,0.08);
+            border: 1px solid rgba(255,159,26,0.25);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            font-size: 0.78em;
+            color: var(--orange-accent);
+            line-height: 1.5;
+            display: none;
+        }
+
+        .equal-loss-warning.visible { display: block; }
+
+        /* -- PROMO CODE -- */
+        .promo-code-section {
+            margin-top: 14px;
+        }
+
+        .promo-input-wrapper {
+            display: flex;
+            gap: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.2s;
+        }
+
+        .promo-input-wrapper:focus-within {
+            border-color: var(--green-accent);
+            box-shadow: 0 0 0 2px var(--green-glow);
+        }
+
+        .promo-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82em;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            outline: none;
+        }
+
+        .promo-input::placeholder {
+            color: var(--text-muted);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .promo-apply-btn {
+            padding: 10px 20px;
+            background: var(--bg-input-hover);
+            border: none;
+            border-left: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .promo-apply-btn:hover {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+        }
+
+        .promo-apply-btn.applied {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+            cursor: default;
+        }
+
+        .promo-feedback {
+            font-size: 0.78em;
+            margin-top: 6px;
+            min-height: 18px;
+            line-height: 1.4;
+        }
+
+        .promo-feedback.success { color: var(--green-accent); }
+        .promo-feedback.error { color: var(--red-accent); }
+
+        .price-row .original-price {
+            text-decoration: line-through;
+            color: var(--text-muted);
+            font-size: 0.85em;
+            margin-right: 8px;
+        }
+
+
+        /* -- SIZE TICKS -- */
+        .size-ticks {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62em;
+            color: var(--text-muted);
+        }
+
+        /* -- PLATFORM TOGGLE -- */
+        .platform-toggle {
+            display: flex;
+            gap: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .platform-btn {
+            flex: 1;
+            padding: 9px 12px;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .platform-btn:not(:last-child) { border-right: 1px solid var(--border-subtle); }
+
+        .platform-btn.active {
+            background: var(--green-accent);
+            color: var(--bg-primary);
+        }
+
+        .platform-btn:hover:not(.active) {
+            background: var(--bg-input-hover);
+            color: var(--text-secondary);
+        }
+
+        .platform-name { pointer-events: none; }
+
+        /* -- CONFIG SUMMARY -- */
+        .config-summary {
+            margin-top: 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .summary-header {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .summary-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--green-accent);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 16px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.76em;
+            padding: 2px 0;
+        }
+
+        .summary-item .s-label { color: var(--text-muted); }
+        .summary-item .s-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* -- SHARE BUTTON -- */
+        .share-btn {
+            width: 100%;
+            padding: 10px 16px;
+            margin-top: 12px;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .share-btn:hover {
+            border-color: var(--blue-accent);
+            color: var(--blue-accent);
+            background: rgba(74,158,255,0.06);
+        }
+
+        .share-icon { font-size: 1em; }
+
+        .share-feedback {
+            font-size: 0.76em;
+            margin-top: 6px;
+            min-height: 16px;
+            text-align: center;
+            color: var(--green-accent);
+        }
+
+
+        /* -- CLIENT TOTAL -- */
+        .client-total-section {
+            margin-top: 20px;
+            padding: 24px 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .client-total-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .client-total-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4em;
+            font-weight: 700;
+            color: var(--green-accent);
+            text-shadow: 0 0 24px var(--green-glow);
+            line-height: 1.2;
+        }
+
+        .client-total-promo {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .client-original {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1em;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .client-promo-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4em;
+            font-weight: 700;
+            color: var(--green-accent);
+            text-shadow: 0 0 24px var(--green-glow);
+            line-height: 1.2;
+        }
+
+        .client-promo-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78em;
+            font-weight: 700;
+            color: var(--bg-primary);
+            background: var(--green-accent);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .hidden { display: none !important; }
+        
+        /* â”€â”€ RULES SECTION â”€â”€ */
+        .rules-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 32px;
+        }
+
+        .rules-section h2 {
+            color: var(--text-primary);
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        .stat-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green-accent), transparent);
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--green-accent);
+            margin-bottom: 4px;
+            text-shadow: 0 0 20px var(--green-glow);
+        }
+        
+        .stat-label {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+        
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .rules-grid { grid-template-columns: 1fr; }
+        }
+        
+        .rule-card {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+        
+        .rule-card:hover {
+            border-color: rgba(0,224,80,0.25);
+            box-shadow: 0 4px 16px rgba(0,224,80,0.05);
+        }
+        
+        .rule-title {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rule-icon { font-size: 1.2em; }
+        
+        .rule-description {
+            color: var(--text-muted);
+            font-size: 0.82em;
+            line-height: 1.6;
+        }
+        
+        /* â”€â”€ COMPARISON TABLE â”€â”€ */
+        .comparison-table {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid var(--border-subtle);
+            overflow-x: auto;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 13px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.85em;
+        }
+        
+        .comparison-table th {
+            background: var(--bg-input);
+            color: var(--green-accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.72em;
+            letter-spacing: 0.1em;
+        }
+        
+        .comparison-table th:first-child { border-top-left-radius: 8px; }
+        .comparison-table th:last-child { border-top-right-radius: 8px; }
+        
+        .comparison-table tbody tr { transition: background 0.15s; }
+        .comparison-table tbody tr:hover { background: var(--bg-input); }
+        .comparison-table td { color: var(--text-secondary); }
+        .comparison-table td:first-child { font-weight: 600; color: var(--text-primary); }
+        .comparison-table td strong { color: var(--text-primary); }
+
+        /* â”€â”€ SCROLLBAR â”€â”€ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--metal-dark); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">D</div>
+            <div>
+                <h1>DOJI <span>FUNDING</span></h1>
+                <div class="header-sub">Challenge Configurator</div>
+            </div>
+        </div>
+
+        <!-- â•â•â• SINGLE CONFIGURATOR â•â•â• -->
+        <div class="configurator-wrapper">
+
+            <!-- LEFT: Parameters -->
+            <div class="evaluation-card">
+                <div class="card-header">
+                    <h2 class="card-title">Challenge Configurator</h2>
+                    <span class="badge one-step" id="badge-label">Fast Track</span>
+                </div>
+
+                <!-- Challenge Type Selector -->
+                <div class="challenge-type-selector">
+                    <button class="challenge-type-btn disabled-btn" onclick="setChallengeType('instant')">
+                        Instant Funding
+                        <span class="btn-sub">Coming Soon</span>
+                    </button>
+                    <button class="challenge-type-btn active" onclick="setChallengeType('onestep')">
+                        1 Step
+                        <span class="btn-sub">Fast Track</span>
+                    </button>
+                    <button class="challenge-type-btn" onclick="setChallengeType('twostep')">
+                        2 Step
+                        <span class="btn-sub">Classic</span>
+                    </button>
+                </div>
+
+                <!-- Coming Soon (Instant) -->
+                <div id="instant-content" class="hidden">
+                    <div class="coming-soon-overlay">
+                        <h3>Under Development</h3>
+                        <p>We're working hard to bring you instant access to funded accounts. Stay tuned for updates!</p>
+                        <p style="margin-top: 12px; font-weight: bold; color: var(--text-primary);">Expected Launch: Q2 2026</p>
+                        <p style="margin-top: 10px; font-style: italic; color: var(--green-accent);">Exclusive Daily Payout available only with Instant Funding</p>
+                    </div>
+                </div>
+
+                <!-- Active Configurator -->
+                <div id="config-content">
+                    <div class="parameters">
+                        <!-- Account Size -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Account Size</span>
+                                <span class="parameter-value" id="cfg-size-value">$50,000</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-size" 
+                                   min="0" max="19" value="9" step="1" 
+                                   oninput="updateConfig()">
+                            <div class="size-ticks">
+                                <span>$5K</span>
+                                <span>$50K</span>
+                                <span>$100K</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Profit Target (1-Step) -->
+                        <div class="parameter-group" id="group-target-single">
+                            <div class="parameter-label">
+                                <span>Profit Target</span>
+                                <span class="parameter-value" id="cfg-target-value">10%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-target" 
+                                   min="5" max="15" value="10" step="1" 
+                                   oninput="updateConfig()">
+                        </div>
+
+                        <!-- Profit Target Phase 1 (2-Step) -->
+                        <div class="parameter-group hidden" id="group-target1">
+                            <div class="parameter-label">
+                                <span>Profit Target Phase 1</span>
+                                <span class="parameter-value" id="cfg-target1-value">8%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-target1" 
+                                   min="5" max="12" value="8" step="1" 
+                                   oninput="updateConfig()">
+                        </div>
+
+                        <!-- Profit Target Phase 2 (2-Step) -->
+                        <div class="parameter-group hidden" id="group-target2">
+                            <div class="parameter-label">
+                                <span>Profit Target Phase 2</span>
+                                <span class="parameter-value" id="cfg-target2-value">5%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-target2" 
+                                   min="3" max="8" value="5" step="1" 
+                                   oninput="updateConfig()">
+                        </div>
+                        
+                        <!-- Daily Loss -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Daily Loss</span>
+                                <span class="parameter-value" id="cfg-daily-value">5%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-daily" 
+                                   min="2" max="8" value="5" step="1" 
+                                   oninput="updateConfig()">
+                            <div class="loss-type-group">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div class="loss-type-toggle" id="cfg-daily-type-toggle" style="flex: 1;">
+                                        <button onclick="setLossType('daily','intraday')" class="active">Intraday</button>
+                                        <button onclick="setLossType('daily','eod')">End of Day</button>
+                                        <button onclick="setLossType('daily','static')">Static</button>
+                                    </div>
+                                    <div class="tooltip-wrapper">
+                                        <span class="tooltip-trigger">?</span>
+                                        <div class="tooltip-content">
+                                            <div class="tooltip-title">Daily Loss Calculation Types</div>
+                                            <div class="tooltip-text"><strong>Intraday (Cheapest):</strong> Loss is tracked in real-time, tick by tick. Any breach instantly suspends the account. Most restrictive.</div>
+                                            <div class="tooltip-text"><strong>End of Day (Standard):</strong> Loss is only evaluated at market close. Intraday drawdowns are ignored if the account recovers by session end.</div>
+                                            <div class="tooltip-text"><strong>Static (Premium):</strong> Daily loss is fixed relative to the start-of-day balance. Provides a predictable, stable reference point. Most forgiving.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="loss-type-label" id="cfg-daily-type-label">Cheapest - Real-time balance tracking</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Max Loss -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Max Loss</span>
+                                <span class="parameter-value" id="cfg-max-value">8%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-max" 
+                                   min="4" max="12" value="8" step="1" 
+                                   oninput="updateConfig()">
+                            <div class="loss-type-group">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div class="loss-type-toggle" id="cfg-max-type-toggle" style="flex: 1;">
+                                        <button onclick="setLossType('max','intraday')" class="active">Intraday</button>
+                                        <button onclick="setLossType('max','eod')">End of Day</button>
+                                        <button onclick="setLossType('max','static')">Static</button>
+                                    </div>
+                                    <div class="tooltip-wrapper">
+                                        <span class="tooltip-trigger">?</span>
+                                        <div class="tooltip-content">
+                                            <div class="tooltip-title">Max Loss Calculation Types</div>
+                                            <div class="tooltip-text"><strong>Intraday (Cheapest):</strong> Equity is tracked in real-time. Any breach of the max drawdown instantly suspends the account.</div>
+                                            <div class="tooltip-text"><strong>End of Day (Standard):</strong> Max loss is only evaluated at end of day. Allows intraday fluctuations as long as the account recovers by close.</div>
+                                            <div class="tooltip-text"><strong>Static (Premium):</strong> Max loss is measured from the initial account balance. Provides a fixed, unchanging reference point. Most forgiving.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="loss-type-label" id="cfg-max-type-label">Cheapest - Real-time equity tracking</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profit Split -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Profit Split</span>
+                                <span class="parameter-value" id="cfg-split-value">80%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-split" 
+                                   min="50" max="90" value="80" step="5" 
+                                   oninput="updateConfig()">
+                        </div>
+                        
+                        <!-- Min Trading Days -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span style="display:flex;align-items:center;gap:0;">Min Trading Days
+                                    <div class="tooltip-wrapper">
+                                        <span class="tooltip-trigger">?</span>
+                                        <div class="tooltip-content">
+                                            <div class="tooltip-title">Minimum Trading Days</div>
+                                            <div class="tooltip-text"><strong>What it means:</strong> The minimum number of days you must actively trade before your evaluation can be validated.</div>
+                                            <div class="tooltip-text"><strong>Overweek impact:</strong> Enabling Overweek Holding enforces a minimum of 5 trading days.</div>
+                                            <div class="tooltip-text"><strong>Two Step:</strong> Days are split 60/40 between Phase 1 and Phase 2.</div>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span class="parameter-value" id="cfg-days-value">5</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-days" 
+                                   min="3" max="10" value="5" step="1" 
+                                   oninput="updateConfig()">
+                        </div>
+                        
+                        <!-- Consistency Rule -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span style="display:flex;align-items:center;gap:0;">Consistency Rule
+                                    <div class="tooltip-wrapper">
+                                        <span class="tooltip-trigger">?</span>
+                                        <div class="tooltip-content">
+                                            <div class="tooltip-title">Consistency Rule</div>
+                                            <div class="tooltip-text"><strong>What it means:</strong> No single trading day's profit can exceed this percentage of your total profit. Prevents "lucky trading" and ensures repeatable performance.</div>
+                                            <div class="tooltip-text"><strong>Example:</strong> With 30% consistency on $1,000 total profit, no single day can account for more than $300.</div>
+                                            <div class="tooltip-text"><strong>Weekly payout cap:</strong> If Weekly payout is selected, consistency is capped at 30% maximum.</div>
+                                        </div>
+                                    </div>
+                                </span>
+                                <span class="parameter-value" id="cfg-consistency-value">30%</span>
+                            </div>
+                            <input type="range" class="slider" id="cfg-consistency" 
+                                   min="10" max="50" value="30" step="10" 
+                                   oninput="updateConfig()">
+                        </div>
+                        
+                        <!-- Platform -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Trading Platform</span>
+                                <span class="parameter-value" id="cfg-platform-value">MetaTrader 5</span>
+                            </div>
+                            <div class="platform-toggle">
+                                <button class="platform-btn active" onclick="setPlatform('mt5')">
+                                    <span class="platform-name">MetaTrader 5</span>
+                                </button>
+                                <button class="platform-btn" onclick="setPlatform('ctrader')">
+                                    <span class="platform-name">cTrader</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Payout Frequency -->
+                        <div class="parameter-group">
+                            <div class="parameter-label">
+                                <span>Payout Frequency</span>
+                                <span class="parameter-value" id="cfg-payout-value">Monthly</span>
+                            </div>
+                            <select id="cfg-payout" onchange="updateConfig()">
+                                <option value="monthly" selected>Monthly (included)</option>
+                                <option value="biweekly">Bi-Weekly (+$29)</option>
+                                <option value="weekly">Weekly (+$59)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Holding Options -->
+                        <div class="holding-options">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="cfg-overnight" onchange="updateConfig()">
+                                <label for="cfg-overnight" id="cfg-overnight-label">Overnight Holding (+$19)</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="cfg-overweek" onchange="handleOverweekChange()">
+                                <label for="cfg-overweek" id="cfg-overweek-label">Overweek Holding (+$29)</label>
+                            </div>
+                        </div>
+
+                        <!-- Equal Loss Warning -->
+                        <div class="equal-loss-warning" id="equal-loss-warning">
+                            <strong>&#9888; Daily Loss = Max Loss:</strong> This effectively removes the daily loss protection. A surcharge of +$100 is applied.
+                        </div>
+
+                        <!-- Reset Button -->
+                        <button class="reset-btn" onclick="resetConfig()">
+                            <span class="reset-icon">&#8634;</span>
+                            Reset to Defaults
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Your Configuration -->
+            <div id="pricing-panel">
+                <div class="evaluation-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Your Configuration</h2>
+                    </div>
+
+                    <!-- Config Summary -->
+                    <div class="config-summary" id="config-summary" style="margin-top: 0; border: none; padding: 0; background: transparent;">
+                        <div class="summary-header">
+                            <span class="summary-title">Configuration Summary</span>
+                        </div>
+                        <div class="summary-grid" id="summary-grid"></div>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="client-total-section">
+                        <div class="client-total-label">TOTAL PRICE</div>
+                        <div class="client-total-price" id="cfg-total-display">$249</div>
+                        <div class="client-total-promo" id="cfg-promo-display" style="display: none;">
+                            <span class="client-original" id="cfg-original-display">$249</span>
+                            <span class="client-promo-price" id="cfg-promo-final-display">$199</span>
+                            <span class="client-promo-badge" id="cfg-promo-badge-display">-20%</span>
+                        </div>
+                    </div>
+
+                    <!-- Promo Code Input -->
+                    <div class="promo-code-section">
+                        <div class="promo-input-wrapper">
+                            <input type="text" id="promo-input" class="promo-input" placeholder="Enter promo code" maxlength="20" spellcheck="false" autocomplete="off">
+                            <button class="promo-apply-btn" id="promo-apply-btn" onclick="applyPromoCode()">Apply</button>
+                        </div>
+                        <div class="promo-feedback" id="promo-feedback"></div>
+                    </div>
+
+                    <!-- Share Button -->
+                    <button class="share-btn" onclick="shareConfig()">
+                        <span class="share-icon">&#128279;</span> Share Configuration
+                    </button>
+                    <div class="share-feedback" id="share-feedback"></div>
+                    
+                    <div class="note-box" id="cfg-note">
+                        <strong>Note:</strong> Consistency Rule and Payout Frequency apply to Funded accounts only. Weekly payout limits consistency to max 30%.
+                    </div>
+                </div>
+
+                <!-- Hidden elements for JS compatibility -->
+                <div style="display:none;">
+                    <span id="cfg-base"></span>
+                    <span id="cfg-diff-adj"></span>
+                    <span id="cfg-split-adj"></span>
+                    <span id="cfg-options-adj"></span>
+                    <span id="cfg-losstype-adj"></span>
+                    <span id="cfg-equal-adj"></span>
+                    <span id="cfg-payout-adj"></span>
+                    <span id="cfg-promo-adj"></span>
+                    <span id="cfg-total"></span>
+                    <span id="cfg-promo-total"></span>
+                    <span id="cfg-equal-loss-row"></span>
+                    <span id="cfg-promo-row"></span>
+                    <span id="cfg-promo-total-row"></span>
+                    <span id="cfg-risk"></span>
+                    <span id="total-configs"></span>
+                    <span id="avg-price"></span>
+                    <span id="risk-score"></span>
+                    <span id="protection-level"></span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        // â•â•â• STATE â•â•â•
+        let challengeType = 'onestep'; // 'instant', 'onestep', 'twostep'
+
+        const lossTypes = { daily: 'intraday', max: 'intraday' };
+        
+        const lossTypeLabels = {
+            daily: {
+                intraday: 'Cheapest - Real-time balance tracking',
+                static: 'Premium - Fixed at start of day balance',
+                eod: 'Standard - Calculated at end of day only'
+            },
+            max: {
+                intraday: 'Cheapest - Real-time equity tracking',
+                static: 'Premium - Based on initial balance',
+                eod: 'Standard - Evaluated at end of day only'
+            }
+        };
+
+        const basePrices = {
+            onestep: {
+                5000: 39, 10000: 59, 15000: 79, 20000: 99, 25000: 119,
+                30000: 139, 35000: 159, 40000: 179, 45000: 199, 50000: 249,
+                55000: 279, 60000: 309, 65000: 339, 70000: 369, 75000: 399,
+                80000: 429, 85000: 459, 90000: 479, 95000: 489, 100000: 499
+            },
+            twostep: {
+                5000: 69, 10000: 89, 15000: 109, 20000: 129, 25000: 149,
+                30000: 169, 35000: 189, 40000: 209, 45000: 229, 50000: 249,
+                55000: 279, 60000: 309, 65000: 329, 70000: 349, 75000: 369,
+                80000: 379, 85000: 389, 90000: 394, 95000: 397, 100000: 399
+            }
+        };
+
+        
+        // Payout frequency pricing
+        const payoutPricing = {
+            monthly: 0,
+            biweekly: 29,
+            weekly: 59
+        };
+
+        // Promo codes: { code: { type: 'percent'|'fixed', value: number, label: string } }
+        const promoCodes = {
+            'DOJI10': { type: 'percent', value: 10, label: '10% off' },
+            'DOJI20': { type: 'percent', value: 20, label: '20% off' },
+            'LAUNCH25': { type: 'percent', value: 25, label: '25% Launch Discount' },
+            'WELCOME15': { type: 'percent', value: 15, label: '15% Welcome Discount' },
+            'TRADER50': { type: 'fixed', value: 50, label: '$50 off' },
+        };
+
+        let activePromo = null;
+
+// â•â•â• CHALLENGE TYPE SWITCHING â•â•â•
+        function setChallengeType(type) {
+            if (type === 'instant') return; // Disabled
+            challengeType = type;
+
+            // Update buttons
+            document.querySelectorAll('.challenge-type-btn').forEach(btn => btn.classList.remove('active'));
+            if (type === 'onestep') {
+                document.querySelectorAll('.challenge-type-btn')[1].classList.add('active');
+            } else {
+                document.querySelectorAll('.challenge-type-btn')[2].classList.add('active');
+            }
+
+            // Show/hide instant overlay
+            document.getElementById('instant-content').classList.add('hidden');
+            document.getElementById('config-content').classList.remove('hidden');
+            document.getElementById('pricing-panel').style.opacity = '1';
+            document.getElementById('pricing-panel').style.pointerEvents = 'auto';
+
+            // Badge
+            const badge = document.getElementById('badge-label');
+            if (type === 'onestep') {
+                badge.className = 'badge one-step';
+                badge.textContent = 'Fast Track';
+            } else {
+                badge.className = 'badge two-step';
+                badge.textContent = 'Classic';
+            }
+
+            // Toggle target fields
+            document.getElementById('group-target-single').classList.toggle('hidden', type === 'twostep');
+            document.getElementById('group-target1').classList.toggle('hidden', type === 'onestep');
+            document.getElementById('group-target2').classList.toggle('hidden', type === 'onestep');
+
+            // Adjust slider ranges per type
+            const dailySlider = document.getElementById('cfg-daily');
+            const maxSlider = document.getElementById('cfg-max');
+            const splitSlider = document.getElementById('cfg-split');
+            const daysSlider = document.getElementById('cfg-days');
+
+            if (type === 'onestep') {
+                dailySlider.min = 2; dailySlider.max = 8;
+                maxSlider.min = 4; maxSlider.max = 12;
+                splitSlider.min = 50; splitSlider.max = 90;
+                daysSlider.min = 3; daysSlider.max = 10;
+                if (parseInt(daysSlider.value) > 10) daysSlider.value = 5;
+                if (parseInt(splitSlider.value) < 50) splitSlider.value = 80;
+                // Overnight/overweek prices
+                document.getElementById('cfg-overnight-label').textContent = 'Overnight Holding (+$19)';
+                document.getElementById('cfg-overweek-label').textContent = 'Overweek Holding (+$29)';
+                // Note
+                document.getElementById('cfg-note').innerHTML = '<strong>Note:</strong> Consistency Rule and Payout Frequency apply to Funded accounts only. Weekly payout limits consistency to max 30%.';
+            } else {
+                dailySlider.min = 3; dailySlider.max = 8;
+                maxSlider.min = 6; maxSlider.max = 15;
+                splitSlider.min = 70; splitSlider.max = 90;
+                daysSlider.min = 5; daysSlider.max = 20;
+                if (parseInt(daysSlider.value) < 5) daysSlider.value = 10;
+                if (parseInt(splitSlider.value) < 70) splitSlider.value = 80;
+                if (parseInt(dailySlider.value) < 3) dailySlider.value = 5;
+                if (parseInt(maxSlider.value) < 6) maxSlider.value = 10;
+                document.getElementById('cfg-overnight-label').textContent = 'Overnight Holding (+$25)';
+                document.getElementById('cfg-overweek-label').textContent = 'Overweek Holding (+$39)';
+                document.getElementById('cfg-note').innerHTML = '<strong>Note:</strong> Days split 60/40 between Phase 1 and 2. Consistency Rule and Payout Frequency apply to Funded accounts only. Weekly payout limits consistency to max 30%.';
+            }
+
+            updateConfig();
+        }
+
+        // â•â•â• LOSS TYPE â•â•â•
+        function setLossType(lossField, type) {
+            lossTypes[lossField] = type;
+            
+            const toggle = document.getElementById(`cfg-${lossField}-type-toggle`);
+            toggle.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            const buttons = toggle.querySelectorAll('button');
+            if (type === 'intraday') buttons[0].classList.add('active');
+            else if (type === 'eod') buttons[1].classList.add('active');
+            else buttons[2].classList.add('active');
+            
+            document.getElementById(`cfg-${lossField}-type-label`).textContent = lossTypeLabels[lossField][type];
+            updateConfig();
+        }
+        
+        function getLossTypeAdj() {
+            let adj = 0;
+            if (challengeType === 'onestep') {
+                if (lossTypes.daily === 'intraday') adj -= 15;
+                else if (lossTypes.daily === 'static') adj += 25;
+                if (lossTypes.max === 'intraday') adj -= 15;
+                else if (lossTypes.max === 'static') adj += 25;
+            } else {
+                if (lossTypes.daily === 'intraday') adj -= 19;
+                else if (lossTypes.daily === 'static') adj += 29;
+                if (lossTypes.max === 'intraday') adj -= 19;
+                else if (lossTypes.max === 'static') adj += 29;
+            }
+            return adj;
+        }
+
+
+
+
+        // Account size array (slider index -> value)
+        const accountSizes = [5000,10000,15000,20000,25000,30000,35000,40000,45000,50000,
+                              55000,60000,65000,70000,75000,80000,85000,90000,95000,100000];
+
+        function getAccountSize() {
+            return accountSizes[parseInt(document.getElementById('cfg-size').value)];
+        }
+
+        // Platform state
+        let selectedPlatform = 'mt5';
+
+        function setPlatform(platform) {
+            selectedPlatform = platform;
+            document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+            if (platform === 'mt5') {
+                document.querySelectorAll('.platform-btn')[0].classList.add('active');
+                document.getElementById('cfg-platform-value').textContent = 'MetaTrader 5';
+            } else {
+                document.querySelectorAll('.platform-btn')[1].classList.add('active');
+                document.getElementById('cfg-platform-value').textContent = 'cTrader';
+            }
+            updateConfigSummary();
+        }
+
+
+        // â•â•â• MAIN UPDATE â•â•â•
+        function updateConfig() {
+            const size = getAccountSize();
+            const daily = parseFloat(document.getElementById('cfg-daily').value);
+            const max = parseFloat(document.getElementById('cfg-max').value);
+            const split = parseInt(document.getElementById('cfg-split').value);
+            const days = parseInt(document.getElementById('cfg-days').value);
+            const consistency = parseInt(document.getElementById('cfg-consistency').value);
+            const payout = document.getElementById('cfg-payout').value;
+            const overnight = document.getElementById('cfg-overnight').checked;
+            const overweek = document.getElementById('cfg-overweek').checked;
+
+            // Auto-adjust daily if > max (allow equal)
+            if (daily > max) {
+                document.getElementById('cfg-daily').value = max;
+                updateConfig();
+                return;
+            }
+
+            // Show/hide equal loss warning
+            const equalWarning = document.getElementById('equal-loss-warning');
+            const isEqualLoss = (daily === max);
+            equalWarning.classList.toggle('visible', isEqualLoss);
+
+            // Consistency limit for weekly payout
+            const consistencySlider = document.getElementById('cfg-consistency');
+            if (payout === 'weekly') {
+                if (consistency > 30) {
+                    consistencySlider.value = 30;
+                    updateConfig();
+                    return;
+                }
+                consistencySlider.max = 30;
+            } else {
+                consistencySlider.max = 50;
+            }
+
+            // Min days based on consistency
+            const minDays = Math.ceil(consistency / 10);
+            if (days < minDays) {
+                document.getElementById('cfg-days').value = minDays;
+                updateConfig();
+                return;
+            }
+
+            // Overweek holding requires min 5 trading days
+            if (overweek && days < 5) {
+                document.getElementById('cfg-days').value = 5;
+                updateConfig();
+                return;
+            }
+
+            // Update display values
+            document.getElementById('cfg-size-value').textContent = `$${size.toLocaleString()}`;
+            document.getElementById('cfg-daily-value').textContent = `${daily}%`;
+            document.getElementById('cfg-max-value').textContent = `${max}%`;
+            document.getElementById('cfg-split-value').textContent = `${split}%`;
+            document.getElementById('cfg-days-value').textContent = `${days}`;
+            document.getElementById('cfg-consistency-value').textContent = `${consistency}%`;
+
+            let basePrice, diffAdj = 0, splitAdj = 0, optionsAdj = 0, target;
+
+            if (challengeType === 'onestep') {
+                target = parseInt(document.getElementById('cfg-target').value);
+                document.getElementById('cfg-target-value').textContent = `${target}%`;
+
+                basePrice = basePrices.onestep[size];
+
+                // Difficulty
+                if (target < 10) diffAdj += (10 - target) * 20;
+                if (target > 12) diffAdj -= (target - 12) * 15;
+                if (daily > 5) diffAdj += (daily - 5) * 60;
+                if (daily < 4) diffAdj -= (4 - daily) * 30;
+                if (max > 8) diffAdj += (max - 8) * 50;
+                if (max < 6) diffAdj -= (6 - max) * 25;
+                if (days < 5) diffAdj += (5 - days) * 15;
+                if (consistency < 40) diffAdj -= (40 - consistency) * 2;
+                if (consistency > 40) diffAdj += (consistency - 40) * 2;
+
+                // Split
+                splitAdj = (split - 70) * 4;
+
+                // Options
+                if (overnight) optionsAdj += 19;
+                if (overweek) optionsAdj += 29;
+
+            } else {
+                const target1 = parseInt(document.getElementById('cfg-target1').value);
+                const target2 = parseInt(document.getElementById('cfg-target2').value);
+                document.getElementById('cfg-target1-value').textContent = `${target1}%`;
+                document.getElementById('cfg-target2-value').textContent = `${target2}%`;
+                target = target1 + target2;
+
+                basePrice = basePrices.twostep[size];
+
+                // Difficulty
+                if (target < 10) diffAdj += (10 - target) * 15;
+                if (target > 12) diffAdj -= (target - 12) * 10;
+                if (daily > 5) diffAdj += (daily - 5) * 50;
+                if (daily < 5) diffAdj -= (5 - daily) * 25;
+                if (max > 10) diffAdj += (max - 10) * 45;
+                if (max < 10) diffAdj -= (10 - max) * 20;
+                if (days < 10) diffAdj += (10 - days) * 10;
+                if (consistency < 45) diffAdj -= (45 - consistency) * 3;
+                if (consistency > 45) diffAdj += (consistency - 45) * 3;
+
+                // Split
+                splitAdj = (split - 80) * 6;
+
+                // Options
+                if (overnight) optionsAdj += 25;
+                if (overweek) optionsAdj += 39;
+            }
+
+            const lossTypeAdj = getLossTypeAdj();
+            const equalLossSurcharge = isEqualLoss ? 100 : 0;
+            const payoutAdj = payoutPricing[payout] || 0;
+            const total = Math.max(basePrice + diffAdj + splitAdj + optionsAdj + lossTypeAdj + equalLossSurcharge + payoutAdj, basePrice * 0.5);
+
+            // Promo code discount
+            let promoDiscount = 0;
+            let promoFinal = total;
+            if (activePromo) {
+                if (activePromo.type === 'percent') {
+                    promoDiscount = Math.round(total * activePromo.value / 100);
+                } else {
+                    promoDiscount = activePromo.value;
+                }
+                promoFinal = Math.max(total - promoDiscount, basePrice * 0.3);
+            }
+
+            // Update pricing display
+            document.getElementById('cfg-base').textContent = `$${basePrice}`;
+            document.getElementById('cfg-diff-adj').textContent = `${diffAdj >= 0 ? '+' : ''}$${Math.round(diffAdj)}`;
+            document.getElementById('cfg-split-adj').textContent = `${splitAdj >= 0 ? '+' : ''}$${Math.round(splitAdj)}`;
+            document.getElementById('cfg-options-adj').textContent = `+$${optionsAdj}`;
+            document.getElementById('cfg-losstype-adj').textContent = `${lossTypeAdj >= 0 ? '+' : '-'}$${Math.abs(lossTypeAdj)}`;
+            document.getElementById('cfg-equal-loss-row').style.display = isEqualLoss ? 'flex' : 'none';
+            document.getElementById('cfg-payout-adj').textContent = payoutAdj > 0 ? `+$${payoutAdj}` : '$0';
+
+            // Payout frequency value label
+            const payoutLabels = { monthly: 'Monthly', biweekly: 'Bi-Weekly', weekly: 'Weekly' };
+            document.getElementById('cfg-payout-value').textContent = payoutLabels[payout];
+
+            // Promo display
+            if (activePromo) {
+                document.getElementById('cfg-promo-row').style.display = 'flex';
+                document.getElementById('cfg-promo-adj').textContent = `-$${promoDiscount}`;
+                document.getElementById('cfg-promo-total-row').style.display = 'flex';
+                document.getElementById('cfg-promo-total').textContent = `$${Math.round(promoFinal)}`;
+                document.getElementById('cfg-total').innerHTML = `<span class="original-price">$${Math.round(total)}</span>`;
+            } else {
+                document.getElementById('cfg-promo-row').style.display = 'none';
+                document.getElementById('cfg-promo-total-row').style.display = 'none';
+                document.getElementById('cfg-total').textContent = `$${Math.round(total)}`;
+            }
+
+            const displayPrice = activePromo ? promoFinal : total;
+
+            // Client total display
+            const totalDisplay = document.getElementById('cfg-total-display');
+            const promoDisplay = document.getElementById('cfg-promo-display');
+            if (activePromo) {
+                totalDisplay.style.display = 'none';
+                promoDisplay.style.display = 'flex';
+                document.getElementById('cfg-original-display').textContent = '$' + Math.round(total);
+                document.getElementById('cfg-promo-final-display').textContent = '$' + Math.round(promoFinal);
+                const pctOff = activePromo.type === 'percent' ? '-' + activePromo.value + '%' : '-$' + activePromo.value;
+                document.getElementById('cfg-promo-badge-display').textContent = pctOff;
+            } else {
+                totalDisplay.style.display = 'block';
+                promoDisplay.style.display = 'none';
+                totalDisplay.textContent = '$' + Math.round(total);
+            }
+
+            // Risk indicator
+            let riskScore = (target / 100) * (split / 100) / ((daily / 100) * (max / 100));
+            if (lossTypes.daily === 'eod') riskScore *= 0.85;
+            if (lossTypes.max === 'eod') riskScore *= 0.85;
+            if (lossTypes.daily === 'intraday') riskScore *= 1.1;
+            if (lossTypes.max === 'intraday') riskScore *= 1.1;
+
+            const indicator = document.getElementById('cfg-risk');
+            if (riskScore < 0.8) {
+                indicator.className = 'risk-indicator high';
+                indicator.innerHTML = '<strong>High Risk</strong><br>Aggressive configuration';
+            } else if (riskScore < 1.5) {
+                indicator.className = 'risk-indicator medium';
+                indicator.innerHTML = '<strong>Medium Risk</strong><br>Balanced configuration';
+            } else {
+                indicator.className = 'risk-indicator low';
+                indicator.innerHTML = '<strong>Low Risk</strong><br>Conservative configuration';
+            }
+
+            // Global stats
+            const totalConfigs = 6 * 9 * 13 * 7 * 4 * 3 * 3 * 2 * 2;
+            document.getElementById('total-configs').textContent = totalConfigs.toLocaleString();
+            document.getElementById('avg-price').textContent = `$${Math.round(displayPrice)}`;
+            document.getElementById('risk-score').textContent = riskScore.toFixed(2);
+
+            if (riskScore < 0.7) {
+                document.getElementById('protection-level').textContent = 'Maximum';
+            } else if (riskScore < 1.3) {
+                document.getElementById('protection-level').textContent = 'High';
+            } else {
+                document.getElementById('protection-level').textContent = 'Moderate';
+            }
+
+            updateConfigSummary();
+        }
+
+        // â•â•â• INIT â•â•â•
+        window.onload = function() {
+            loadFromUrl();
+            updateConfig();
+        };
+
+        // ═══ RESET CONFIG ═══
+        function resetConfig() {
+            lossTypes.daily = 'intraday';
+            lossTypes.max = 'intraday';
+            
+            ['daily', 'max'].forEach(field => {
+                const toggle = document.getElementById(`cfg-${field}-type-toggle`);
+                toggle.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                toggle.querySelectorAll('button')[0].classList.add('active');
+                document.getElementById(`cfg-${field}-type-label`).textContent = lossTypeLabels[field]['intraday'];
+            });
+
+            document.getElementById('cfg-overnight').checked = false;
+            document.getElementById('cfg-overweek').checked = false;
+            document.getElementById('cfg-payout').value = 'monthly';
+
+            // Clear promo code
+            clearPromoCode();
+
+            if (challengeType === 'onestep') {
+                document.getElementById('cfg-size').value = 9; // index 9 = $50,000
+                document.getElementById('cfg-target').value = 10;
+                document.getElementById('cfg-daily').value = 5;
+                document.getElementById('cfg-max').value = 8;
+                document.getElementById('cfg-split').value = 80;
+                document.getElementById('cfg-days').value = 5;
+                document.getElementById('cfg-consistency').value = 30;
+                document.getElementById('cfg-daily').min = 2;
+                document.getElementById('cfg-daily').max = 8;
+                document.getElementById('cfg-max').min = 4;
+                document.getElementById('cfg-max').max = 12;
+                document.getElementById('cfg-split').min = 50;
+                document.getElementById('cfg-split').max = 90;
+                document.getElementById('cfg-days').min = 3;
+                document.getElementById('cfg-days').max = 10;
+                document.getElementById('cfg-consistency').max = 50;
+            } else {
+                document.getElementById('cfg-size').value = 9; // index 9 = $50,000
+                document.getElementById('cfg-target1').value = 8;
+                document.getElementById('cfg-target2').value = 5;
+                document.getElementById('cfg-daily').value = 5;
+                document.getElementById('cfg-max').value = 10;
+                document.getElementById('cfg-split').value = 80;
+                document.getElementById('cfg-days').value = 10;
+                document.getElementById('cfg-consistency').value = 30;
+                document.getElementById('cfg-daily').min = 3;
+                document.getElementById('cfg-daily').max = 8;
+                document.getElementById('cfg-max').min = 6;
+                document.getElementById('cfg-max').max = 15;
+                document.getElementById('cfg-split').min = 70;
+                document.getElementById('cfg-split').max = 90;
+                document.getElementById('cfg-days').min = 5;
+                document.getElementById('cfg-days').max = 20;
+                document.getElementById('cfg-consistency').max = 50;
+            }
+            updateConfig();
+        }
+
+        // ═══ OVERWEEK HOLDING HANDLER ═══
+        function handleOverweekChange() {
+            const overweek = document.getElementById('cfg-overweek').checked;
+            if (overweek) {
+                const daysSlider = document.getElementById('cfg-days');
+                const currentDays = parseInt(daysSlider.value);
+                if (currentDays < 5) {
+                    daysSlider.value = 5;
+                }
+            }
+            updateConfig();
+        }
+
+        // ═══ PROMO CODE ═══
+        function applyPromoCode() {
+            const input = document.getElementById('promo-input');
+            const feedback = document.getElementById('promo-feedback');
+            const btn = document.getElementById('promo-apply-btn');
+            const code = input.value.trim().toUpperCase();
+
+            if (!code) {
+                feedback.className = 'promo-feedback error';
+                feedback.textContent = 'Please enter a promo code.';
+                return;
+            }
+
+            if (activePromo) {
+                // Already applied - clear it
+                clearPromoCode();
+                return;
+            }
+
+            if (promoCodes[code]) {
+                const promo = promoCodes[code];
+                activePromo = { code, ...promo };
+                feedback.className = 'promo-feedback success';
+                feedback.innerHTML = `&#10003; <strong>${code}</strong> applied - ${promo.label}`;
+                btn.textContent = 'Remove';
+                btn.classList.add('applied');
+                input.disabled = true;
+                input.style.opacity = '0.6';
+                updateConfig();
+            } else {
+                feedback.className = 'promo-feedback error';
+                feedback.textContent = 'Invalid promo code. Please try again.';
+                input.value = '';
+            }
+        }
+
+        function clearPromoCode() {
+            activePromo = null;
+            const input = document.getElementById('promo-input');
+            const feedback = document.getElementById('promo-feedback');
+            const btn = document.getElementById('promo-apply-btn');
+            input.value = '';
+            input.disabled = false;
+            input.style.opacity = '1';
+            feedback.className = 'promo-feedback';
+            feedback.textContent = '';
+            btn.textContent = 'Apply';
+            btn.classList.remove('applied');
+            updateConfig();
+        }
+
+        // Config summary update
+        function updateConfigSummary() {
+            const size = getAccountSize();
+            const daily = parseFloat(document.getElementById('cfg-daily').value);
+            const max = parseFloat(document.getElementById('cfg-max').value);
+            const split = parseInt(document.getElementById('cfg-split').value);
+            const days = parseInt(document.getElementById('cfg-days').value);
+            const consistency = parseInt(document.getElementById('cfg-consistency').value);
+            const payout = document.getElementById('cfg-payout').value;
+            const overnight = document.getElementById('cfg-overnight').checked;
+            const overweek = document.getElementById('cfg-overweek').checked;
+            const payoutLabels = { monthly: 'Monthly', biweekly: 'Bi-Weekly', weekly: 'Weekly' };
+            const platformLabel = selectedPlatform === 'mt5' ? 'MetaTrader 5' : 'cTrader';
+
+            let items = [];
+            items.push(['Account', `$${size.toLocaleString()}`]);
+            items.push(['Platform', platformLabel]);
+
+            if (challengeType === 'onestep') {
+                const target = parseInt(document.getElementById('cfg-target').value);
+                items.push(['Target', `${target}%`]);
+            } else {
+                const t1 = parseInt(document.getElementById('cfg-target1').value);
+                const t2 = parseInt(document.getElementById('cfg-target2').value);
+                items.push(['P1 Target', `${t1}%`]);
+                items.push(['P2 Target', `${t2}%`]);
+            }
+
+            items.push(['Daily Loss', `${daily}% (${lossTypes.daily})`]);
+            items.push(['Max Loss', `${max}% (${lossTypes.max})`]);
+            items.push(['Split', `${split}%`]);
+            items.push(['Min Days', `${days}`]);
+            items.push(['Consistency', `${consistency}%`]);
+            items.push(['Payout', payoutLabels[payout]]);
+
+            const addons = [];
+            if (overnight) addons.push('Overnight');
+            if (overweek) addons.push('Overweek');
+            if (addons.length) items.push(['Add-Ons', addons.join(' + ')]);
+
+            const grid = document.getElementById('summary-grid');
+            grid.innerHTML = items.map(([label, value]) => 
+                `<div class="summary-item"><span class="s-label">${label}</span><span class="s-value">${value}</span></div>`
+            ).join('');
+        }
+
+        // Share configuration
+        function shareConfig() {
+            const size = getAccountSize();
+            const daily = document.getElementById('cfg-daily').value;
+            const max = document.getElementById('cfg-max').value;
+            const split = document.getElementById('cfg-split').value;
+            const days = document.getElementById('cfg-days').value;
+            const consistency = document.getElementById('cfg-consistency').value;
+            const payout = document.getElementById('cfg-payout').value;
+            const overnight = document.getElementById('cfg-overnight').checked ? '1' : '0';
+            const overweek = document.getElementById('cfg-overweek').checked ? '1' : '0';
+            const dlType = lossTypes.daily[0]; // i/e/s
+            const mlType = lossTypes.max[0];
+            const platform = selectedPlatform === 'mt5' ? 'm' : 'c';
+
+            let params = `t=${challengeType === 'onestep' ? '1' : '2'}`;
+            params += `&s=${size}&d=${daily}&m=${max}&sp=${split}&dy=${days}&c=${consistency}`;
+            params += `&p=${payout[0]}&on=${overnight}&ow=${overweek}&dl=${dlType}&ml=${mlType}&pl=${platform}`;
+
+            if (challengeType === 'onestep') {
+                params += `&tg=${document.getElementById('cfg-target').value}`;
+            } else {
+                params += `&t1=${document.getElementById('cfg-target1').value}&t2=${document.getElementById('cfg-target2').value}`;
+            }
+
+            const shareUrl = window.location.origin + window.location.pathname + '?' + params;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showShareFeedback('Link copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopy(shareUrl);
+                });
+            } else {
+                fallbackCopy(shareUrl);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showShareFeedback('Link copied to clipboard!');
+            } catch(e) {
+                showShareFeedback('Could not copy. Check console.', true);
+                console.log('Share URL:', text);
+            }
+            document.body.removeChild(ta);
+        }
+
+        function showShareFeedback(msg, isError) {
+            const fb = document.getElementById('share-feedback');
+            fb.textContent = msg;
+            fb.style.color = isError ? 'var(--red-accent)' : 'var(--green-accent)';
+            setTimeout(() => { fb.textContent = ''; }, 3000);
+        }
+
+        // Load config from URL params
+        function loadFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            if (!params.has('t')) return;
+
+            const type = params.get('t') === '2' ? 'twostep' : 'onestep';
+            setChallengeType(type);
+
+            const sizeVal = parseInt(params.get('s'));
+            const sizeIdx = accountSizes.indexOf(sizeVal);
+            if (sizeIdx >= 0) document.getElementById('cfg-size').value = sizeIdx;
+
+            if (params.has('d')) document.getElementById('cfg-daily').value = params.get('d');
+            if (params.has('m')) document.getElementById('cfg-max').value = params.get('m');
+            if (params.has('sp')) document.getElementById('cfg-split').value = params.get('sp');
+            if (params.has('dy')) document.getElementById('cfg-days').value = params.get('dy');
+            if (params.has('c')) document.getElementById('cfg-consistency').value = params.get('c');
+
+            if (params.has('p')) {
+                const pMap = { m: 'monthly', b: 'biweekly', w: 'weekly' };
+                document.getElementById('cfg-payout').value = pMap[params.get('p')] || 'monthly';
+            }
+
+            if (params.get('on') === '1') document.getElementById('cfg-overnight').checked = true;
+            if (params.get('ow') === '1') document.getElementById('cfg-overweek').checked = true;
+
+            const ltMap = { i: 'intraday', e: 'eod', s: 'static' };
+            if (params.has('dl')) setLossType('daily', ltMap[params.get('dl')] || 'intraday');
+            if (params.has('ml')) setLossType('max', ltMap[params.get('ml')] || 'intraday');
+
+            if (params.has('pl')) setPlatform(params.get('pl') === 'c' ? 'ctrader' : 'mt5');
+
+            if (type === 'onestep' && params.has('tg')) {
+                document.getElementById('cfg-target').value = params.get('tg');
+            } else if (type === 'twostep') {
+                if (params.has('t1')) document.getElementById('cfg-target1').value = params.get('t1');
+                if (params.has('t2')) document.getElementById('cfg-target2').value = params.get('t2');
+            }
+
+            updateConfig();
+        }
+
+        // Allow Enter key on promo input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('promo-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') applyPromoCode();
+            });
+        });
+    </script>
+</body>
+</html>
